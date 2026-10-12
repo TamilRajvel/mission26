@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduBridge | Smart Education</title>
+<style>
+:root {
+  --blue: #365cf5;
+  --bg: #f4f6fb;
+  --text: #202943;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  background: #fff;
+  padding: 20px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e9f2;
+}
+.logo { font-size: 24px; font-weight: bold; color: var(--blue); }
+.logo span { color: #222b42; }
+header small { color: #69738b; }
+main { max-width: 1050px; margin: auto; padding: 28px 18px; }
+.hero {
+  background: linear-gradient(120deg, #365cf5, #7458ed);
+  color: white;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 24px;
+}
+.hero h1 { margin: 0 0 10px; font-size: 30px; }
+.hero p { line-height: 1.6; margin-bottom: 0; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 24px;
+}
+.stat, .panel {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 18px #263b6910;
+}
+.stat small { color: #758099; }
+.stat h2 { margin: 12px 0 0; font-size: 30px; }
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+h3 { margin-top: 0; }
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 12px;
+  border: 1px solid #dce2ef;
+  border-radius: 9px;
+  font: inherit;
+}
+button {
+  background: var(--blue);
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+button:hover { opacity: .88; }
+.task {
+  border: 1px solid #e8ebf3;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+.task.done .task-name {
+  text-decoration: line-through;
+  color: #8791a7;
+}
+.task-name { font-weight: bold; overflow-wrap: anywhere; }
+.task small { color: #778198; display: block; margin-top: 5px; }
+.task button { padding: 8px 10px; font-size: 12px; }
+.complete { background: #16875a; }
+.delete { background: #e44c60; }
+.resource {
+  padding: 12px 0;
+  border-bottom: 1px solid #edf0f6;
+}
+.resource p { color: #69738b; font-size: 14px; }
+.resource button { padding: 8px 12px; }
+#plan {
+  white-space: pre-line;
+  line-height: 1.8;
+  background: #f1f4ff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+footer { text-align: center; padding: 25px; color: #778198; }
+@media(max-width:650px) {
+  .layout, .stats { grid-template-columns: 1fr; }
+  header { padding: 16px; }
+  .hero h1 { font-size: 25px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Edu<span>Bridge</span> 🎓</div>
+  <small>Smart Education Platform</small>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Learn smarter, not harder.</h1>
+    <p>One place to organize assignments, explore learning
+    resources, and plan your study time.</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <small>Total assignments</small>
+      <h2 id="total">0</h2>
+    </div>
+    <div class="stat">
+      <small>Pending tasks</small>
+      <h2 id="pending">0</h2>
+    </div>
+    <div class="stat">
+      <small>Completed tasks</small>
+      <h2 id="completed">0</h2>
+    </div>
+  </section>
+
+  <section class="layout">
+    <div class="panel">
+      <h3>📚 Add an assignment</h3>
+      <form id="taskForm">
+        <label for="taskName">Assignment name</label>
+        <input id="taskName" placeholder="e.g. Mathematics homework"
+               required maxlength="100">
+
+        <label for="subject">Subject</label>
+        <select id="subject">
+          <option>Mathematics</option>
+          <option>Programming</option>
+          <option>Science</option>
+          <option>English</option>
+          <option>Other</option>
+        </select>
+
+        <label for="deadline">Deadline</label>
+        <input id="deadline" type="date" required>
+
+        <button type="submit">+ Add assignment</button>
+      </form>
+
+      <h3 style="margin-top:28px">Your assignments</h3>
+      <div id="tasks"></div>
+    </div>
+
+    <div>
+      <section class="panel">
+        <h3>🔎 Find learning resources</h3>
+        <input id="search" placeholder="Search a topic..."
+               aria-label="Search learning resources">
+        <div id="resources"></div>
+      </section>
+
+      <section class="panel" style="margin-top:20px">
+        <h3>🧠 Study plan generator</h3>
+        <p>Enter your topic and available study time.</p>
+        <label for="topic">Topic to study</label>
+        <input id="topic" placeholder="e.g. Python functions">
+
+        <label for="minutes">Available time</label>
+        <select id="minutes">
+          <option value="30">30 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="90">1.5 hours</option>
+          <option value="120">2 hours</option>
+        </select>
+
+        <button id="generate">Generate my plan</button>
+        <div id="plan" hidden></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>EduBridge • A student-built Smart Education prototype</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let tasks = [];
+try {
+  tasks = JSON.parse(localStorage.getItem("edubridge_tasks") || "[]");
+  if (!Array.isArray(tasks)) tasks = [];
+} catch {
+  tasks = [];
+}
+
+const resources = [
+  { name: "Python basics", subject: "Programming",
+    info: "Start with variables, conditions, loops and functions.",
+    query: "Python programming beginner tutorial" },
+  { name: "Mathematics", subject: "Mathematics",
+    info: "Practise formulas with examples and solved problems.",
+    query: "basic mathematics lessons solved examples" },
+  { name: "Science concepts", subject: "Science",
+    info: "Learn concepts through explanations and demonstrations.",
+    query: "science concepts explained for students" },
+  { name: "English skills", subject: "English",
+    info: "Practise grammar, vocabulary and communication.",
+    query: "English grammar lessons for students" }
+];
+
+function save() {
+  localStorage.setItem("edubridge_tasks", JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  $("total").textContent = tasks.length;
+  $("pending").textContent = tasks.filter(t => !t.done).length;
+  $("completed").textContent = tasks.filter(t => t.done).length;
+  $("tasks").replaceChildren();
+
+  if (!tasks.length) {
+    const msg = document.createElement("p");
+    msg.textContent = "No assignments yet. Add your first task above!";
+    $("tasks").append(msg);
+    return;
+  }
+
+  tasks.forEach(task => {
+    const card = document.createElement("div");
+    card.className = "task" + (task.done ? " done" : "");
+
+    const details = document.createElement("div");
+    details.style.flex = "1";
+
+    const name = document.createElement("div");
+    name.className = "task-name";
+    name.textContent = task.name;
+
+    const info = document.createElement("small");
+    info.textContent = task.subject + " • Due: " + task.date;
+
+    details.append(name, info);
+
+    const actions = document.createElement("div");
+    actions.style.display = "flex";
+    actions.style.gap = "5px";
+
+    const toggle = document.createElement("button");
+    toggle.className = "complete";
+    toggle.textContent = task.done ? "Undo" : "Done";
+    toggle.setAttribute("aria-label",
+      (task.done ? "Undo " : "Complete ") + task.name);
+    toggle.onclick = () => {
+      task.done = !task.done;
+      save();
+      renderTasks();
+    };
+
+    const remove = document.createElement("button");
+    remove.className = "delete";
+    remove.textContent = "Delete";
+    remove.onclick = () => {
+      tasks = tasks.filter(t => t.id !== task.id);
+      save();
+      renderTasks();
+    };
+
+    actions.append(toggle, remove);
+    card.append(details, actions);
+    $("tasks").append(card);
+  });
+}
+
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const date = $("deadline").value;
+  if (date < new Date().toLocaleDateString("en-CA")) {
+    alert("Please choose today or a future deadline.");
+    return;
+  }
+
+  tasks.push({
+    id: Date.now(),
+    name: $("taskName").value.trim(),
+    subject: $("subject").value,
+    date,
+    done: false
+  });
+
+  save();
+  renderTasks();
+  $("taskForm").reset();
+});
+
+function renderResources() {
+  const query = $("search").value.trim().toLowerCase();
+  $("resources").replaceChildren();
+
+  const matches = resources.filter(r =>
+    (r.name + " " + r.subject + " " + r.info)
+      .toLowerCase().includes(query)
+  );
+
+  if (!matches.length) {
+    const msg = document.createElement("p");
+    msg.textContent = "No matching topic. Try Python, Science, English or Mathematics.";
+    $("resources").append(msg);
+    return;
+  }
+
+  matches.forEach(r => {
+    const box = document.createElement("div");
+    box.className = "resource";
+
+    const title = document.createElement("strong");
+    title.textContent = r.name;
+
+    const description = document.createElement("p");
+    description.textContent = r.info;
+
+    const link = document.createElement("button");
+    link.textContent = "Explore topic";
+    link.onclick = () => window.open(
+      "https://www.youtube.com/results?search_query=" +
+      encodeURIComponent(r.query), "_blank", "noopener,noreferrer"
+    );
+
+    box.append(title, description, link);
+    $("resources").append(box);
+  });
+}
+
+$("search").addEventListener("input", renderResources);
+
+$("generate").addEventListener("click", () => {
+  const topic = $("topic").value.trim();
+  if (!topic) {
+    alert("Please enter a topic first.");
+    $("topic").focus();
+    return;
+  }
+
+  const total = Number($("minutes").value);
+  const learn = Math.round(total * 0.5);
+  const practise = Math.round(total * 0.3);
+  const review = total - learn - practise;
+
+  $("plan").textContent =
+    "YOUR PERSONAL STUDY PLAN\n\n" +
+    "Topic: " + topic + "\n" +
+    "1. Learn the basics — " + learn + " minutes\n" +
+    "2. Solve practice questions — " + practise + " minutes\n" +
+    "3. Review what you learned — " + review + " minutes\n\n" +
+    "Tip: Put your phone away and test yourself at the end.";
+
+  $("plan").hidden = false;
+});
+
+renderTasks();
+renderResources();
+</script>
+</body>
+</html>
